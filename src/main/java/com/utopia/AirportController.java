@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,11 +20,7 @@ import com.utopia.models.Airport;
 import com.utopia.services.AirportService;
 
 @RestController
-@RequestMapping(
-	value = "/airports",
-	produces = { "application/json", "application/xml", "text/xml"}, 
-	consumes = MediaType.ALL_VALUE
-)
+@RequestMapping(value = "/airports")
 public class AirportController implements ErrorController {
 
 	@Autowired
