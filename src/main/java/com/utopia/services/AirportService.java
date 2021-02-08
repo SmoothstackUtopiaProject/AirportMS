@@ -21,11 +21,15 @@ public class AirportService {
 		return airportRepository.findAll();
 	}
 
-	public Airport findByIataId(String iataId) {
-		Optional<Airport> optionalAirpot = airportRepository.findById(iataId);
-		return optionalAirpot.isPresent()
-		? optionalAirpot.get()
-		: null;
+	public Airport findByIataId(String iataId) throws AirportNotFoundException {
+		// Validate IataId
+		String formattedIataId = formatIataId(iataId);
+		if(!validateIataId(formattedIataId)) throw new IllegalArgumentException("Not a valid IATA code: " + formattedIataId + "!");
+
+		// Perform GET query
+		Optional<Airport> optionalAirpot = airportRepository.findById(formattedIataId);
+		if(!optionalAirpot.isPresent()) throw new AirportNotFoundException("No airport with IATA code: " + formattedIataId + " exist!");
+		return optionalAirpot.get();
 	}
 
 	public List<Airport> findByCityName(String cityName) {
@@ -33,18 +37,68 @@ public class AirportService {
 	}
 
 	public Airport insert(String iataId, String cityName) throws AirportAlreadyExistsException, IllegalArgumentException {
-		Optional<Airport> optionalAirpot = airportRepository.findById(iataId);
-		if(optionalAirpot.isPresent()) {
-			throw new AirportAlreadyExistsException("An airport with IATA code: " +iataId + " already exist!");
+		// Validate IataId & cityName
+		String formattedIataId = formatIataId(iataId);
+		String formattedCityName = formatCityName(cityName);
+		if(!validateIataId(formattedIataId)) {
+			throw new IllegalArgumentException("The IATA Code: " + formattedIataId + "is not valid!");
 		}
-		return airportRepository.save(new Airport(iataId, cityName));
+		if(!validateCityName(formattedCityName)) {
+			throw new IllegalArgumentException("The city name: " + cityName + " is invalid!\n(Only letters are allowed - cannot be empty or have extra whitespace)");
+		}
+		
+		// Perform the POST query
+		Optional<Airport> optionalAirpot = airportRepository.findById(formattedIataId);
+		if(optionalAirpot.isPresent()) throw new AirportAlreadyExistsException("An airport with IATA code: " + formattedIataId + " already exist!");
+		return airportRepository.save(new Airport(formattedIataId, formattedCityName));
+	}
+
+	public Airport update(String iataId, String cityName) throws AirportNotFoundException, IllegalArgumentException {		
+		// Validate cityName
+		String formattedIataId = formatIataId(iataId);
+		String formattedCityName = formatCityName(cityName);
+		if(!validateCityName(formattedCityName)) {
+			throw new IllegalArgumentException("The city name: " + cityName + " is invalid!\n(Only letters are allowed - cannot be empty or have extra whitespace)");
+		}
+
+		// Perform the PUT query
+		Optional<Airport> optionalAirpot = airportRepository.findById(formattedIataId);
+		if(!optionalAirpot.isPresent()) throw new AirportNotFoundException("No airport with IATA code: " + formattedIataId + " exist!");
+		return airportRepository.save(new Airport(formattedIataId, formattedCityName));
 	}
 
 	public void delete(String iataId) throws AirportNotFoundException {
+		String formattedIataId = iataId.toUpperCase();
 		try {
-			airportRepository.deleteById(iataId);
+			airportRepository.deleteById(formattedIataId);
 		} catch(Exception err) {
 			throw new AirportNotFoundException("IATA Code not found!");
 		}
+	}
+
+	private String formatIataId(String iataId) {
+		return iataId != null
+		? iataId.toUpperCase().replaceAll("[^A-Z]", "")
+		: null;
+	}
+
+	private Boolean validateIataId(String iataId) {
+		return iataId != null
+			&& iataId.replaceAll("[^A-Z]", "").length() == 3;
+	}
+
+	private String formatCityName(String cityName) {
+		return cityName != null
+		? cityName.trim().replaceAll("[^a-zA-Z.\\s]", "")
+		: null;
+	}
+
+	private Boolean validateCityName(String cityName) {
+		int startLength = cityName.length();
+		return cityName != null 
+			&& !cityName.isEmpty()
+			&& cityName.replaceAll("[^a-zA-Z\\s]", "").length() == startLength
+			&& cityName.charAt(0) != ' ' 
+			&& cityName.charAt(cityName.length() - 1) != ' ';
 	}
 }
