@@ -28,12 +28,16 @@ public class AirportService {
 		: null;
 	}
 
-	public Airport insert(Airport airport) throws AirportAlreadyExistsException {
-		try {
-			return airportRepository.save(airport);
-		} catch(IllegalArgumentException err) {
-			throw new AirportAlreadyExistsException("IATA Code already exist!");
+	public List<Airport> findByCityName(String cityName) {
+		return airportRepository.findByCityName(cityName);
+	}
+
+	public Airport insert(String iataId, String cityName) throws AirportAlreadyExistsException, IllegalArgumentException {
+		Optional<Airport> optionalAirpot = airportRepository.findById(iataId);
+		if(optionalAirpot.isPresent()) {
+			throw new AirportAlreadyExistsException("An airport with IATA code: " +iataId + " already exist!");
 		}
+		return airportRepository.save(new Airport(iataId, cityName));
 	}
 
 	public void delete(String iataId) throws AirportNotFoundException {
