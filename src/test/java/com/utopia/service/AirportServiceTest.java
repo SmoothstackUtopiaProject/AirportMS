@@ -249,7 +249,7 @@ public class AirportServiceTest {
       when(service.insert(testAirport.getIataId(), testAirport.getCity()))
       .thenReturn(testAirport);
 
-      MvcResult response = mvc.perform(post(SERVICE_PATH_AIRPORTS + "/new")
+      MvcResult response = mvc.perform(post(SERVICE_PATH_AIRPORTS)
       .header("Accept", "application/json")
       .content(new ObjectMapper().writeValueAsString(testAirport)))
       .andExpect(status().is(201))
@@ -271,7 +271,7 @@ public class AirportServiceTest {
       when(service.insert(testAirport.getIataId(), testAirport.getCity()))
       .thenThrow(new AirportAlreadyExistsException("duplicate"));
 
-      mvc.perform(post(SERVICE_PATH_AIRPORTS + "/new")
+      mvc.perform(post(SERVICE_PATH_AIRPORTS)
       .header("Accept", "application/json")
       .content(new ObjectMapper().writeValueAsString(testAirport)))
       .andExpect(status().is(409))
@@ -288,7 +288,7 @@ public class AirportServiceTest {
       when(service.insert(invalidIataId, testAirport.getCity()))
       .thenThrow(new IllegalArgumentException());
 
-      MvcResult response = mvc.perform(post(SERVICE_PATH_AIRPORTS + "/new")
+      MvcResult response = mvc.perform(post(SERVICE_PATH_AIRPORTS)
       .header("Accept", "application/json")
       .content(new ObjectMapper().writeValueAsString(new Airport(invalidIataId, testAirport.getCity()))))
       .andExpect(status().is(400))
@@ -303,7 +303,7 @@ public class AirportServiceTest {
   @Test
   void test_insert_withBadParams_thenStatus400() {    
     try {
-      mvc.perform(post(SERVICE_PATH_AIRPORTS + "/new")
+      mvc.perform(post(SERVICE_PATH_AIRPORTS)
       .header("Accept", "application/json")
       .content(""))
       .andExpect(status().is(400))
@@ -320,7 +320,7 @@ public class AirportServiceTest {
       when(service.update(testAirport.getIataId(), newCityName))
       .thenReturn(new Airport(testAirport.getIataId(), newCityName));
 
-      MvcResult response = mvc.perform(put(SERVICE_PATH_AIRPORTS + "/update/" + testAirport.getIataId())
+      MvcResult response = mvc.perform(put(SERVICE_PATH_AIRPORTS + "/" + testAirport.getIataId())
       .header("Accept", "application/json")
       .content(newCityName))
       .andExpect(status().is(202))
@@ -343,7 +343,7 @@ public class AirportServiceTest {
       when(service.update(invalidIataId, testAirport.getCity()))
       .thenThrow(new AirportNotFoundException());
 
-      mvc.perform(put(SERVICE_PATH_AIRPORTS + "/update/" + invalidIataId)
+      mvc.perform(put(SERVICE_PATH_AIRPORTS + "/" + invalidIataId)
       .header("Accept", "application/json")
       .content(testAirport.getCity()))
       .andExpect(status().is(404))
@@ -358,7 +358,7 @@ public class AirportServiceTest {
     try {
       String invalidNewCityName = ""; // as names cannot be empty
 
-      mvc.perform(put(SERVICE_PATH_AIRPORTS + "/update/" + testAirport.getIataId())
+      mvc.perform(put(SERVICE_PATH_AIRPORTS + "/" + testAirport.getIataId())
       .header("Accept", "application/json")
       .content(invalidNewCityName))
       .andExpect(status().is(400))
@@ -371,7 +371,7 @@ public class AirportServiceTest {
   @Test
   void test_update_withBadParams_thenStatus400() {    
     try {
-      mvc.perform(post(SERVICE_PATH_AIRPORTS + "/new")
+      mvc.perform(post(SERVICE_PATH_AIRPORTS)
       .header("Accept", "application/json")
       .content(""))
       .andExpect(status().is(400))
@@ -384,7 +384,7 @@ public class AirportServiceTest {
   @Test
   void test_delete_withValidAirport_thenStatus204() {    
     try {
-      mvc.perform(delete(SERVICE_PATH_AIRPORTS + "/delete/" + testAirport.getIataId())
+      mvc.perform(delete(SERVICE_PATH_AIRPORTS + "/" + testAirport.getIataId())
       .header("Accept", "application/json"))
       .andExpect(status().is(204))
       .andReturn();

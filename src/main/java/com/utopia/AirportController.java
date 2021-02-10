@@ -60,7 +60,7 @@ public class AirportController {
 		: new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 	}
 
-	@PostMapping("/new")
+	@PostMapping
 	public ResponseEntity<Object> insert(@RequestBody String body) {
 		try {
 			Airport airport = new ObjectMapper().readValue(body, Airport.class);
@@ -73,7 +73,7 @@ public class AirportController {
 		}
 	}
 
-	@PutMapping("/update/{iataId}")
+	@PutMapping("{iataId}")
 	public ResponseEntity<Object> update(@PathVariable String iataId, @RequestBody String body) {
 		try {
 			Airport newAirport = airportService.update(iataId, body);
@@ -85,7 +85,7 @@ public class AirportController {
 		}
 	}
 
-	@DeleteMapping("/delete/{iataId}")
+	@DeleteMapping("{iataId}")
 	public ResponseEntity<Object> delete(@PathVariable String iataId) {
 		try {
 			airportService.delete(iataId);
