@@ -1,4 +1,4 @@
-package com.utopia.services;
+package com.ss.utopia.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,10 +6,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.utopia.exeptions.AirportAlreadyExistsException;
-import com.utopia.exeptions.AirportNotFoundException;
-import com.utopia.models.Airport;
-import com.utopia.repositories.AirportRepository;
+import com.ss.utopia.exeptions.AirportAlreadyExistsException;
+import com.ss.utopia.exeptions.AirportNotFoundException;
+import com.ss.utopia.models.Airport;
+import com.ss.utopia.repositories.AirportRepository;
 
 @Service
 public class AirportService {
@@ -40,12 +40,8 @@ public class AirportService {
 		// Validate IataId & cityName
 		String formattedIataId = formatIataId(iataId);
 		String formattedCityName = formatCityName(cityName);
-		if(!validateIataId(formattedIataId)) {
-			throw new IllegalArgumentException("The IATA Code: " + formattedIataId + "is not valid!");
-		}
-		if(!validateCityName(formattedCityName)) {
-			throw new IllegalArgumentException("The city name: " + cityName + " is invalid!\n(Only letters are allowed - cannot be empty or have extra whitespace)");
-		}
+		if(!validateIataId(formattedIataId)) throw new IllegalArgumentException("The IATA Code: " + formattedIataId + "is not valid!");
+		if(!validateCityName(formattedCityName)) throw new IllegalArgumentException("The city name: " + cityName + " is invalid!\n(Only letters are allowed - cannot be empty or have extra whitespace)");
 		
 		// Perform the POST query
 		Optional<Airport> optionalAirpot = airportRepository.findById(formattedIataId);
@@ -83,22 +79,21 @@ public class AirportService {
 	}
 
 	private Boolean validateIataId(String iataId) {
-		return iataId != null
-			&& iataId.replaceAll("[^A-Z]", "").length() == 3;
+		return iataId != null && 
+			iataId.replaceAll("[^A-Z]", "").length() == 3;
 	}
 
 	private String formatCityName(String cityName) {
 		return cityName != null
-		? cityName.trim().replaceAll("[^a-zA-Z.\\s]", "")
+		? cityName.trim()
 		: null;
 	}
 
 	private Boolean validateCityName(String cityName) {
-		int startLength = cityName.length();
-		return cityName != null 
-			&& !cityName.isEmpty()
-			&& cityName.replaceAll("[^a-zA-Z\\s]", "").length() == startLength
-			&& cityName.charAt(0) != ' ' 
-			&& cityName.charAt(cityName.length() - 1) != ' ';
+		return 
+		cityName != null && 
+		!cityName.isEmpty() && 
+		cityName.length() < 256 && 
+		cityName.replaceAll("[^a-zA-Z\\s]", "").length() == cityName.length();
 	}
 }

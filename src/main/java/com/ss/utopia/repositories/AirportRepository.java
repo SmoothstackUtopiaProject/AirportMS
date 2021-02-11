@@ -1,4 +1,4 @@
-package com.utopia.repositories;
+package com.ss.utopia.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import com.utopia.models.Airport;
+import com.ss.utopia.models.Airport;
 
 @Repository
 public interface AirportRepository extends JpaRepository<Airport, String> {

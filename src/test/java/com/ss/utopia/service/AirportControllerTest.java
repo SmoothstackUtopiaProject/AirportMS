@@ -1,4 +1,4 @@
-package com.utopia.service;
+package com.ss.utopia.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,11 +16,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.utopia.AirportController;
-import com.utopia.exeptions.AirportAlreadyExistsException;
-import com.utopia.exeptions.AirportNotFoundException;
-import com.utopia.models.Airport;
-import com.utopia.services.AirportService;
+import com.ss.utopia.AirportController;
+import com.ss.utopia.exeptions.AirportAlreadyExistsException;
+import com.ss.utopia.exeptions.AirportNotFoundException;
+import com.ss.utopia.models.Airport;
+import com.ss.utopia.services.AirportService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,7 +37,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @Profile("test")
 @SpringBootTest
-public class AirportServiceTest {
+public class AirportControllerTest {
 
   final String SERVICE_PATH_AIRPORTS = "/airports";
 

@@ -1,4 +1,4 @@
-package com.utopia;
+package com.ss.utopia;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
