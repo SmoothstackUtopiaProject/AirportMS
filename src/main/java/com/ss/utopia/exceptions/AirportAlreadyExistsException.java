@@ -1,4 +1,4 @@
-package com.ss.utopia.exeptions;
+package com.ss.utopia.exceptions;
 
 public class AirportAlreadyExistsException extends Exception{
 	

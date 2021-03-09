@@ -12,6 +12,6 @@ import com.ss.utopia.models.Airport;
 public interface AirportRepository extends JpaRepository<Airport, String> {
   
   @Query(value="SELECT * FROM airport WHERE city LIKE %?1%", nativeQuery=true)
-	List<Airport> findByCityName(String cityName);
+	List<Airport> findByAirportCityName(String airportCityName);
   
 }

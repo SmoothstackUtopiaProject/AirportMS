@@ -8,34 +8,33 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "airport")
 public class Airport {
+
 	@Id
 	@Column(name = "iata_id")
-	private String iataId;
+	private String airportIataId;
 
 	@Column(name = "city")
-	private String city;
+	private String airportCityName;
 
 	public Airport() {}
-
-	public Airport(String iataId, String city) {
-		super();
-		this.iataId = iataId;
-		this.city = city;
+	public Airport(String airportIataId, String airportCityName) {
+		this.airportIataId = airportIataId;
+		this.airportCityName = airportCityName;
 	}
 
-	public String getIataId() {
-		return iataId;
+	public String getAirportIataId() {
+		return airportIataId;
 	}
 
-	public void setIataId(String iataId) {
-		this.iataId = iataId;
+	public void setAirportIataId(String airportIataId) {
+		this.airportIataId = airportIataId;
 	}
 
-	public String getCity() {
-		return city;
+	public String getAirportCityName() {
+		return airportCityName;
 	}
 
-	public void setCity(String city) {
-		this.city = city;
+	public void setAirportCityName(String airportCityName) {
+		this.airportCityName = airportCityName;
 	}
 }
