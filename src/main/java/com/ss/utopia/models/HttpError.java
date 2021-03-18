@@ -5,6 +5,7 @@ public class HttpError {
 	private String error;
 	private Integer status;
 
+	public HttpError() {}
 	public HttpError(String error, Integer status) {
 		this.error = error;
 		this.status = status;

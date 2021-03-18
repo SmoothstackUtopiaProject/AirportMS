@@ -1,7 +1,0 @@
-AirportMS			
-Path	Method	Result	Status Codes
-GET /airports	findAll()	All Airports	200-Airports, 204-NoAirports
-GET /airports/{iataId}	findByIataId()	Only the 1 airport with the unique IATA ID	200-Airport, 204-InvalidCode
-GET /airports/city={cityName}	findByCity()	All cities that contain the search string as a substring	200-Cities, 204-NoCities
-POST /airports/new/iataId={iataId}, city={cityName}	insert()	new Airport if created	201-Created, 403-Duplicate, 400-InvalidParams
-DELETE /airports/{iataId}	delete()	No-Content or Error	204-Deleted, 404-InvalidCode

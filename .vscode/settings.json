@@ -1,5 +1,4 @@
 {
-  "java.configuration.updateBuildConfiguration": "automatic",
-  "java.dependency.packagePresentation": "hierarchical",
-  "java.dependency.syncWithFolderExplorer": true
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "editor.tabSize": 2
 }
