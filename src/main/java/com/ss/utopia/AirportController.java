@@ -37,6 +37,11 @@ public class AirportController {
   @Autowired
   private AirportService airportService;
 
+	@GetMapping("/health")
+	public ResponseEntity<Object> health() {
+		return new ResponseEntity<>("\"status\": \"up\"", HttpStatus.OK);
+	}
+
   @GetMapping
   public ResponseEntity<Object> findAll() {
     List<Airport> airports = airportService.findAll();
