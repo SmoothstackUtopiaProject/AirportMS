@@ -50,12 +50,14 @@ public class AirportController {
     try {
       Airport airport = airportService.findByIataId(airportIataId);
       return new ResponseEntity<>(airport, HttpStatus.OK);
-    } catch (AirportNotFoundException err) {
+    } 
+    catch (AirportNotFoundException err) {
       return new ResponseEntity<>(
         new HttpError(err.getMessage(), HttpStatus.NOT_FOUND.value()),
         HttpStatus.NOT_FOUND
       );
-    } catch (IllegalArgumentException err) {
+    } 
+    catch (IllegalArgumentException err) {
       return new ResponseEntity<>(
         new HttpError(err.getMessage(), HttpStatus.BAD_REQUEST.value()),
         HttpStatus.BAD_REQUEST
@@ -85,12 +87,14 @@ public class AirportController {
         airportCityName
       );
       return new ResponseEntity<>(newAirport, HttpStatus.CREATED);
-    } catch (AirportAlreadyExistsException err) {
+    } 
+    catch (AirportAlreadyExistsException err) {
       return new ResponseEntity<>(
         new HttpError(err.getMessage(), HttpStatus.CONFLICT.value()),
         HttpStatus.CONFLICT
       );
-    } catch (IllegalArgumentException err) {
+    } 
+    catch (IllegalArgumentException err) {
       return new ResponseEntity<>(
         new HttpError(err.getMessage(), HttpStatus.BAD_REQUEST.value()),
         HttpStatus.BAD_REQUEST
@@ -110,12 +114,14 @@ public class AirportController {
         airportCityName
       );
       return new ResponseEntity<>(newAirport, HttpStatus.ACCEPTED);
-    } catch (AirportNotFoundException err) {
+    } 
+    catch (AirportNotFoundException err) {
       return new ResponseEntity<>(
         new HttpError(err.getMessage(), HttpStatus.NOT_FOUND.value()),
         HttpStatus.NOT_FOUND
       );
-    } catch (IllegalArgumentException err) {
+    } 
+    catch (IllegalArgumentException err) {
       return new ResponseEntity<>(
         new HttpError(err.getMessage(), HttpStatus.BAD_REQUEST.value()),
         HttpStatus.BAD_REQUEST
@@ -128,12 +134,14 @@ public class AirportController {
     try {
       airportService.delete(airportIataId);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } catch (AirportNotFoundException err) {
+    } 
+    catch (AirportNotFoundException err) {
       return new ResponseEntity<>(
         new HttpError(err.getMessage(), HttpStatus.NOT_FOUND.value()),
         HttpStatus.NOT_FOUND
       );
-    } catch (IllegalArgumentException err) {
+    } 
+    catch (IllegalArgumentException err) {
       return new ResponseEntity<>(
         new HttpError(err.getMessage(), HttpStatus.BAD_REQUEST.value()),
         HttpStatus.BAD_REQUEST
