@@ -16,10 +16,10 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Deploying....'
-                sh "aws ecr get-login-password --region us-east-1 --profile=default | docker login --username AWS --password-stdin 466486113081.dkr.ecr.us-east-1.amazonaws.com"                
+                sh "$AWS_LOGIN"                
                 sh "docker build --tag utopiaairportms:$COMMIT_HASH ."
-                sh "docker tag utopiaairportms:$COMMIT_HASH 466486113081.dkr.ecr.us-east-1.amazonaws.com/utopiaairlines/airportms:$COMMIT_HASH"
-                sh "docker push 466486113081.dkr.ecr.us-east-1.amazonaws.com/utopiaairlines/airportms:$COMMIT_HASH"
+                sh "docker tag utopiaairportms:$COMMIT_HASH $AWS_ID/utopiaairlines/airportms:$COMMIT_HASH"
+                sh "docker push $AWS_ID/utopiaairlines/airportms:$COMMIT_HASH"
             }
         }
         stage('Deploy') {
@@ -27,7 +27,7 @@ pipeline {
                sh "touch ECSService.yml"
                sh "rm ECSService.yml"
                sh "wget https://raw.githubusercontent.com/SmoothstackUtopiaProject/CloudFormationTemplates/main/ECSService.yml"
-               sh "aws cloudformation deploy --stack-name UtopiaAirportMS --template-file ./ECSService.yml --parameter-overrides ApplicationName=UtopiaAirportMS ECRepositoryUri=466486113081.dkr.ecr.us-east-1.amazonaws.com/utopiaairlines/airportms:$COMMIT_HASH DBUsername=$DB_USERNAME DBPassword=$DB_PASSWORD SubnetID=$SUBNETID  SecurityGroupID=$SECURITYGROUPID TGArn=$UTOPIA_AIPORTMS_TARGETGROUP --capabilities \"CAPABILITY_IAM\" \"CAPABILITY_NAMED_IAM\""
+               sh "aws cloudformation deploy --stack-name UtopiaAirportMS --template-file ./ECSService.yml --parameter-overrides ApplicationName=UtopiaAirportMS ECRepositoryUri=$AWS_ID/utopiaairlines/airportms:$COMMIT_HASH DBUsername=$DB_USERNAME DBPassword=$DB_PASSWORD SubnetID=$SUBNETID SecurityGroupID=$SECURITYGROUPID TGArn=$UTOPIA_PASSENGERMS_TARGETGROUP --capabilities \"CAPABILITY_IAM\" \"CAPABILITY_NAMED_IAM\""
            }
         }
         stage('Cleanup') {
