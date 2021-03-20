@@ -3,7 +3,7 @@ package com.ss.utopia;
 import com.ss.utopia.exceptions.AirportAlreadyExistsException;
 import com.ss.utopia.exceptions.AirportNotFoundException;
 import com.ss.utopia.models.Airport;
-import com.ss.utopia.models.HttpError;
+import com.ss.utopia.models.ErrorMessage;
 import com.ss.utopia.services.AirportService;
 import java.net.ConnectException;
 import java.sql.SQLException;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,25 +45,10 @@ public class AirportController {
   }
 
   @GetMapping("/{airportIataId}")
-  public ResponseEntity<Object> findByIataId(
-    @PathVariable String airportIataId
-  ) {
-    try {
-      Airport airport = airportService.findByIataId(airportIataId);
-      return new ResponseEntity<>(airport, HttpStatus.OK);
-    } 
-    catch (AirportNotFoundException err) {
-      return new ResponseEntity<>(
-        new HttpError(err.getMessage(), HttpStatus.NOT_FOUND.value()),
-        HttpStatus.NOT_FOUND
-      );
-    } 
-    catch (IllegalArgumentException err) {
-      return new ResponseEntity<>(
-        new HttpError(err.getMessage(), HttpStatus.BAD_REQUEST.value()),
-        HttpStatus.BAD_REQUEST
-      );
-    }
+  public ResponseEntity<Object> findByIataId(@PathVariable String airportIataId) 
+  throws AirportNotFoundException {
+    Airport airport = airportService.findByIataId(airportIataId);
+    return new ResponseEntity<>(airport, HttpStatus.OK);
   }
 
   @PostMapping("/search")
@@ -78,107 +64,87 @@ public class AirportController {
   @PostMapping
   public ResponseEntity<Object> insert(
     @RequestBody Map<String, String> airportMap
-  ) {
-    try {
-      String airportIataId = airportMap.get("airportIataId");
-      String airportCityName = airportMap.get("airportCityName");
-      Airport newAirport = airportService.insert(
-        airportIataId,
-        airportCityName
-      );
-      return new ResponseEntity<>(newAirport, HttpStatus.CREATED);
-    } 
-    catch (AirportAlreadyExistsException err) {
-      return new ResponseEntity<>(
-        new HttpError(err.getMessage(), HttpStatus.CONFLICT.value()),
-        HttpStatus.CONFLICT
-      );
-    } 
-    catch (IllegalArgumentException err) {
-      return new ResponseEntity<>(
-        new HttpError(err.getMessage(), HttpStatus.BAD_REQUEST.value()),
-        HttpStatus.BAD_REQUEST
-      );
-    }
+  ) throws IllegalArgumentException, AirportAlreadyExistsException {
+    String airportIataId = airportMap.get("airportIataId");
+    String airportCityName = airportMap.get("airportCityName");
+    Airport newAirport = airportService.insert(
+      airportIataId,
+      airportCityName
+    );
+    return new ResponseEntity<>(newAirport, HttpStatus.CREATED);
   }
 
   @PutMapping
   public ResponseEntity<Object> update(
     @RequestBody Map<String, String> airportMap
-  ) {
-    try {
-      String airportIataId = airportMap.get("airportIataId");
-      String airportCityName = airportMap.get("airportCityName");
-      Airport newAirport = airportService.update(
-        airportIataId,
-        airportCityName
-      );
-      return new ResponseEntity<>(newAirport, HttpStatus.ACCEPTED);
-    } 
-    catch (AirportNotFoundException err) {
-      return new ResponseEntity<>(
-        new HttpError(err.getMessage(), HttpStatus.NOT_FOUND.value()),
-        HttpStatus.NOT_FOUND
-      );
-    } 
-    catch (IllegalArgumentException err) {
-      return new ResponseEntity<>(
-        new HttpError(err.getMessage(), HttpStatus.BAD_REQUEST.value()),
-        HttpStatus.BAD_REQUEST
-      );
-    }
+  ) throws IllegalArgumentException, AirportNotFoundException {
+    String airportIataId = airportMap.get("airportIataId");
+    String airportCityName = airportMap.get("airportCityName");
+    Airport newAirport = airportService.update(
+      airportIataId,
+      airportCityName
+    );
+    return new ResponseEntity<>(newAirport, HttpStatus.ACCEPTED);
   }
 
   @DeleteMapping("{airportIataId}")
-  public ResponseEntity<Object> delete(@PathVariable String airportIataId) {
-    try {
-      airportService.delete(airportIataId);
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } 
-    catch (AirportNotFoundException err) {
-      return new ResponseEntity<>(
-        new HttpError(err.getMessage(), HttpStatus.NOT_FOUND.value()),
-        HttpStatus.NOT_FOUND
-      );
-    } 
-    catch (IllegalArgumentException err) {
-      return new ResponseEntity<>(
-        new HttpError(err.getMessage(), HttpStatus.BAD_REQUEST.value()),
-        HttpStatus.BAD_REQUEST
-      );
-    }
+  public ResponseEntity<Object> delete(@PathVariable String airportIataId)
+  throws AirportNotFoundException {
+    airportService.delete(airportIataId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
-  @ExceptionHandler(ConnectException.class)
-  public ResponseEntity<Object> invalidConnection() {
-    return new ResponseEntity<>(
-      new HttpError(
-        "Service temporarily unavailabe.",
-        HttpStatus.SERVICE_UNAVAILABLE.value()
-      ),
-      HttpStatus.SERVICE_UNAVAILABLE
-    );
-  }
+  @ExceptionHandler(AirportAlreadyExistsException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	public ResponseEntity<Object> airportAlreadyExistsException(Throwable err) {
+		return new ResponseEntity<>(
+			new ErrorMessage(err.getMessage()), 
+			HttpStatus.CONFLICT
+		);
+	}
 
-  @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<Object> invalidMessage() {
-    return new ResponseEntity<>(
-      new HttpError(
-        "Invalid HTTP message content.",
-        HttpStatus.BAD_REQUEST.value()
-      ),
-      HttpStatus.BAD_REQUEST
-    );
-  }
+  @ExceptionHandler(AirportNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ResponseEntity<Object> airportNotFoundException(Throwable err) {
+		return new ResponseEntity<>(
+			new ErrorMessage(err.getMessage()), 
+			HttpStatus.NOT_FOUND
+		);
+	}
 
-  @ExceptionHandler(SQLException.class)
-  public ResponseEntity<Object> invalidSQL() {
-    return new ResponseEntity<>(
-      new HttpError(
-        "Service temporarily unavailabe.",
-        HttpStatus.SERVICE_UNAVAILABLE.value()
-      ),
-      HttpStatus.SERVICE_UNAVAILABLE
-    );
-  }
+	@ExceptionHandler(ConnectException.class)
+	@ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+	public ResponseEntity<Object> connectException() {
+		return new ResponseEntity<>(
+			new ErrorMessage("Service temporarily unavailabe."), 
+			HttpStatus.SERVICE_UNAVAILABLE
+		);
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<Object> invalidMessage() {
+		return new ResponseEntity<>(
+			new ErrorMessage("Invalid HTTP message content."), 
+			HttpStatus.BAD_REQUEST
+		);
+	}
+
+  @ExceptionHandler(IllegalArgumentException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<Object> illegalArgumentException(Throwable err) {
+		return new ResponseEntity<>(
+			new ErrorMessage(err.getMessage()), 
+			HttpStatus.BAD_REQUEST
+		);
+	}
+
+	@ExceptionHandler(SQLException.class)
+	@ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+	public ResponseEntity<Object> sqlException() {
+		return new ResponseEntity<>(
+			new ErrorMessage("Service temporarily unavailabe."), 
+			HttpStatus.SERVICE_UNAVAILABLE
+		);
+	}
 }

@@ -21,12 +21,8 @@ public class AirportService {
   @Autowired
   private AirportRepository airportRepository;
 
-  private static final Pattern airportIataIdValidation = Pattern.compile(
-    "\\p{IsLatin}"
-  );
-  private static final Pattern airportCityNameValidation = Pattern.compile(
-    "^\\p{IsAlphabetic}"
-  );
+  private static final Pattern airportIataIdValidation = Pattern.compile("[A_Z]");
+  private static final Pattern airportCityNameValidation = Pattern.compile("^\\p{IsAlphabetic}");
 
   public List<Airport> findAll() {
     return airportRepository.findAll();
@@ -35,16 +31,7 @@ public class AirportService {
   public Airport findByIataId(String airportIataId)
     throws AirportNotFoundException {
     String formattedAirportIataId = formatAirportIataId(airportIataId);
-    boolean isValidIataId = validateAirportIataId(airportIataId);
-    if (!isValidIataId) {
-      throw new IllegalArgumentException(
-        "Not a valid IATA code: " + formattedAirportIataId + "."
-      );
-    }
-
-    Optional<Airport> optionalAirpot = airportRepository.findById(
-      formattedAirportIataId
-    );
+    Optional<Airport> optionalAirpot = airportRepository.findById(formattedAirportIataId);
     if (!optionalAirpot.isPresent()) {
       throw new AirportNotFoundException(
         "No airport with IATA code: " + formattedAirportIataId + " exists."
