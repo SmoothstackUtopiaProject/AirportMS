@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +19,7 @@ public class AirportService {
   @Autowired
   private AirportRepository airportRepository;
 
-  private static final Pattern airportIataIdValidation = Pattern.compile("[A_Z]");
-  private static final Pattern airportCityNameValidation = Pattern.compile("^\\p{IsAlphabetic}");
+  private static final String REGEX_AIRPORT_IATA_ID = "[A-Z]";
 
   public List<Airport> findAll() {
     return airportRepository.findAll();
@@ -117,7 +114,7 @@ public class AirportService {
     return airportsWithSearchTerms;
   }
 
-  public Airport insert(String airportIataId, String airportCityName)
+  public Airport insert(String airportIataId, String airportName, String airportCityName)
     throws AirportAlreadyExistsException, IllegalArgumentException {
     String formattedAirportIataId = formatAirportIataId(airportIataId);
     boolean isValidIataId = validateAirportIataId(airportIataId);
@@ -125,17 +122,7 @@ public class AirportService {
       throw new IllegalArgumentException(
         "The IATA Code: " +
         formattedAirportIataId +
-        "is invalid (only uppercase English letter are allowed)"
-      );
-    }
-
-    String formattedAirportCityName = formatAirportCityName(airportCityName);
-    boolean isValidCityName = validateAirportCityName(airportCityName);
-    if (!isValidCityName) {
-      throw new IllegalArgumentException(
-        "The city name: " +
-        formattedAirportCityName +
-        " is invalid (only alphanumeric characters are allowed)."
+        " is invalid (only uppercase English letter are allowed)"
       );
     }
 
@@ -150,11 +137,11 @@ public class AirportService {
       );
     }
     return airportRepository.save(
-      new Airport(formattedAirportIataId, formattedAirportCityName)
+      new Airport(formattedAirportIataId, airportName, airportCityName)
     );
   }
 
-  public Airport update(String airportIataId, String airportCityName)
+  public Airport update(String airportIataId, String airportName, String airportCityName)
     throws AirportNotFoundException, IllegalArgumentException {
     String formattedAirportIataId = formatAirportIataId(airportIataId);
     boolean isValidIataId = validateAirportIataId(airportIataId);
@@ -162,17 +149,7 @@ public class AirportService {
       throw new IllegalArgumentException(
         "The IATA Code: " +
         formattedAirportIataId +
-        "is invalid (only uppercase English letter are allowed)"
-      );
-    }
-
-    String formattedAirportCityName = formatAirportCityName(airportCityName);
-    boolean isValidCityName = validateAirportCityName(airportCityName);
-    if (!isValidCityName) {
-      throw new IllegalArgumentException(
-        "The city name: " +
-        formattedAirportCityName +
-        " is invalid (only alphanumeric characters are allowed)."
+        " is invalid (only uppercase English letter are allowed)"
       );
     }
 
@@ -185,7 +162,7 @@ public class AirportService {
       );
     }
     return airportRepository.save(
-      new Airport(formattedAirportIataId, formattedAirportCityName)
+      new Airport(formattedAirportIataId, airportName, airportCityName)
     );
   }
 
@@ -200,16 +177,6 @@ public class AirportService {
   }
 
   private static Boolean validateAirportIataId(String airportIataId) {
-    Matcher matcher = airportIataIdValidation.matcher(airportIataId);
-    return matcher.matches();
-  }
-
-  private static String formatAirportCityName(String airportCityName) {
-    return airportCityName.trim();
-  }
-
-  private static Boolean validateAirportCityName(String airportCityName) {
-    Matcher matcher = airportCityNameValidation.matcher(airportCityName);
-    return matcher.matches();
+    return airportIataId.replaceAll("[^A-Z]", "").length() == airportIataId.length();
   }
 }

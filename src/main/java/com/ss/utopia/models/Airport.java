@@ -13,12 +13,16 @@ public class Airport {
 	@Column(name = "iata_id")
 	private String airportIataId;
 
+	@Column(name = "name")
+	private String airportName;
+
 	@Column(name = "city")
 	private String airportCityName;
 
 	public Airport() {}
-	public Airport(String airportIataId, String airportCityName) {
+	public Airport(String airportIataId, String airportName, String airportCityName) {
 		this.airportIataId = airportIataId;
+		this.airportName = airportName;
 		this.airportCityName = airportCityName;
 	}
 
@@ -28,6 +32,14 @@ public class Airport {
 
 	public void setAirportIataId(String airportIataId) {
 		this.airportIataId = airportIataId;
+	}
+
+	public String getAirportName() {
+		return airportName;
+	}
+
+	public void setAirportName(String airportName) {
+		this.airportName = airportName;
 	}
 
 	public String getAirportCityName() {

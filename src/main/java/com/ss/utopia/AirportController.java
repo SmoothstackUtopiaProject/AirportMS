@@ -66,9 +66,11 @@ public class AirportController {
     @RequestBody Map<String, String> airportMap
   ) throws IllegalArgumentException, AirportAlreadyExistsException {
     String airportIataId = airportMap.get("airportIataId");
+    String airportName = airportMap.get("airportName");
     String airportCityName = airportMap.get("airportCityName");
     Airport newAirport = airportService.insert(
       airportIataId,
+      airportName,
       airportCityName
     );
     return new ResponseEntity<>(newAirport, HttpStatus.CREATED);
@@ -79,9 +81,11 @@ public class AirportController {
     @RequestBody Map<String, String> airportMap
   ) throws IllegalArgumentException, AirportNotFoundException {
     String airportIataId = airportMap.get("airportIataId");
+    String airportName = airportMap.get("airportName");
     String airportCityName = airportMap.get("airportCityName");
     Airport newAirport = airportService.update(
       airportIataId,
+      airportName,
       airportCityName
     );
     return new ResponseEntity<>(newAirport, HttpStatus.ACCEPTED);
