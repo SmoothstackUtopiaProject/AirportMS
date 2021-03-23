@@ -126,10 +126,10 @@ public class AirportService {
       );
     }
 
-    Optional<Airport> optionalAirpot = airportRepository.findById(
+    Optional<Airport> optionalAirport = airportRepository.findById(
       formattedAirportIataId
     );
-    if (optionalAirpot.isPresent()) {
+    if (optionalAirport.isPresent()) {
       throw new AirportAlreadyExistsException(
         "An airport with IATA code: " +
         formattedAirportIataId +
@@ -153,10 +153,10 @@ public class AirportService {
       );
     }
 
-    Optional<Airport> optionalAirpot = airportRepository.findById(
+    Optional<Airport> optionalAirport = airportRepository.findById(
       formattedAirportIataId
     );
-    if (!optionalAirpot.isPresent()) {
+    if (!optionalAirport.isPresent()) {
       throw new AirportNotFoundException(
         "No airport with IATA code: " + formattedAirportIataId + " exists."
       );
