@@ -63,30 +63,24 @@ public class AirportController {
 
   @PostMapping
   public ResponseEntity<Object> insert(
-    @RequestBody Map<String, String> airportMap
+    @RequestBody Airport airport
   ) throws IllegalArgumentException, AirportAlreadyExistsException {
-    String airportIataId = airportMap.get("airportIataId");
-    String airportName = airportMap.get("airportName");
-    String airportCityName = airportMap.get("airportCityName");
     Airport newAirport = airportService.insert(
-      airportIataId,
-      airportName,
-      airportCityName
+      airport.getAirportIataId(),
+      airport.getAirportName(),
+      airport.getAirportCityName()
     );
     return new ResponseEntity<>(newAirport, HttpStatus.CREATED);
   }
 
   @PutMapping
   public ResponseEntity<Object> update(
-    @RequestBody Map<String, String> airportMap
+    @RequestBody Airport airport
   ) throws IllegalArgumentException, AirportNotFoundException {
-    String airportIataId = airportMap.get("airportIataId");
-    String airportName = airportMap.get("airportName");
-    String airportCityName = airportMap.get("airportCityName");
     Airport newAirport = airportService.update(
-      airportIataId,
-      airportName,
-      airportCityName
+      airport.getAirportIataId(),
+      airport.getAirportName(),
+      airport.getAirportCityName()
     );
     return new ResponseEntity<>(newAirport, HttpStatus.ACCEPTED);
   }
