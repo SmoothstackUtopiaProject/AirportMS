@@ -23,8 +23,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @SpringBootTest
 class AirportServiceTest {
 
-  List<Airport> testAirportList;
-
   @MockBean
   private AirportRepository repository;
 
